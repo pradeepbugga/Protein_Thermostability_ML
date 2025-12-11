@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
     df=pd.read_csv(input_csv)
 
-    model, alphabet = load_esm_model('esm2_t33_650M_UR50D')
+    model, alphabet = load_esm_model('esm2_t36_3B_UR50D')
 
     for index, row in tqdm(df.iterrows(), total=df.shape[0]):
         esm_wt_sequence = row['ESM_WT_SEQUENCE']
