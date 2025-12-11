@@ -1,0 +1,31 @@
+# Bytecode and caches
+__pycache__/
+*.pyc
+
+# Virtual environments
+env/
+venv/
+ENTER/
+*.egg-info/
+
+# Large data files
+data/
+*.csv
+*.pt
+*.npy
+*.pkl
+*.pdf
+*.txt
+*.json
+
+# Generated model files /outputs
+results/*
+*.png
+*.jpg
+*.json
+*.pt
+
+# IDE and system
+.vscode/
+.idea/
+.DS_Store
