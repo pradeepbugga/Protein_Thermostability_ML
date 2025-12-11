@@ -16,6 +16,7 @@ from xgboost import XGBRegressor
 
 input_csv = Path("./data/fireprot_ddG_sequences_clean.csv")
 embed_folder = Path("./data/embeddings")
+layer = 33
 
 if __name__ == "__main__":
     
@@ -23,13 +24,13 @@ if __name__ == "__main__":
     records = build_records(
         raw_embed_folder = embed_folder,
         csv_path = input_csv,
-        layer = 33     
+        layer = layer   
     )
 
     print(f"Built {len(records)} records.")
 
     #build delta per residue
-    feature_fn = lambda rec: delta_residue_feature(rec, dir = embed_folder, layer=33 )
+    feature_fn = lambda rec: delta_residue_feature(rec, dir = embed_folder, layer=layer )
 
     #build feature matrix
     X = build_X(records, feature_fn)

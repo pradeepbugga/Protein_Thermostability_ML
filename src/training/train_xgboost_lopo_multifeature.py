@@ -17,6 +17,7 @@ from xgboost import XGBRegressor
 
 input_csv = Path("./data/fireprot_ddG_sequences_clean.csv")
 embed_folder = Path("./data/embeddings")
+layer = 33
 
 if __name__ == "__main__":
     
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     records = build_records(
         raw_embed_folder = embed_folder,
         csv_path = input_csv,
-        layer = 33     
+        layer = layer     
     )
 
     print(f"Built {len(records)} records.")
@@ -32,10 +33,10 @@ if __name__ == "__main__":
     #build combined functions
     def combined_feature(rec):
         return torch.cat([
-            delta_residue_feature(rec, dir = embed_folder, layer=33 ),
-            delta_pooled_feature(rec, dir = embed_folder, layer=33 ),
-            raw_wt_residue_feature(rec, dir = embed_folder, layer=33 ),
-            raw_mut_residue_feature(rec, dir = embed_folder, layer=33)], dim=-1)
+            delta_residue_feature(rec, dir = embed_folder, layer=layer ),
+            delta_pooled_feature(rec, dir = embed_folder, layer=layer ),
+            raw_wt_residue_feature(rec, dir = embed_folder, layer=layer ),
+            raw_mut_residue_feature(rec, dir = embed_folder, layer=layer)], dim=-1)
 
     #build combined
     X = build_X(records, combined_feature)
