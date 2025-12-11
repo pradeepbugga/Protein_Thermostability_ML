@@ -29,3 +29,6 @@ results/*
 .vscode/
 .idea/
 .DS_Store
+
+#allow requirements.txt
+!requirements.txt
