@@ -12,9 +12,7 @@ model = "gpt-5-nano"
 pdf_path = Path("./data/pdfs")
 
 df = pd.read_csv(fireprot_csv)
-client = AsyncOpenAI(
-    api_key="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"
-)
+client = AsyncOpenAI()
 
 SEM = asyncio.Semaphore(5)
 
