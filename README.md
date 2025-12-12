@@ -123,15 +123,14 @@ Finally, the analysis subfolder contains logic for visualizing the RMSE results.
   - Used LOPO Cross-Validation with a minimum value of 10 (i.e. all proteins with >10 mutation entries are in individual folds, while proteins with <10 mutations are grouped together)
 
   <p align="center">
-  <img width="2011" height="611" alt="image" src="https://github.com/user-attachments/assets/162cc111-12e3-4ffb-a669-f83da605a7d7" />
+  <img width="2011" height="611" alt="image" src="https://github.com/user-attachments/assets/db781277-77ae-41b4-be35-f148c2e98c69" />
   </p>
 
-  We see from the above plot that our MLP can predict ∆∆G from ESM-2 embeddings with RMSE <0.8, but significant RMSE variation among folds.  In some part, this is to be expected as there is not only
+  We see from the above plot that our MLP can predict ∆∆G from ESM-2 embeddings with RMSE <0.7, but significant RMSE variation among folds.  In some part, this is to be expected as there is not only
   experimental variability in the buffer, pH, temperature, and method used to obtain ∆∆G, but also biological variability in the selection of proteins and associated mutations.  We pay special attention 
-  to folds with the highest RMSEs : fold 1, 2, and 5.  Fold 1 corresponds to guanyl-specific ribonuclease T1, a protein with >100 mutations, as the held-out protein.  Likewise, Fold 2 corresponds to 
-  thermonuclease, which has >600 mutations.  Both of these proteins were frequently used in thermal stability research in the '90s and they bear both variable experimental approaches to extracting 
-  thermodynamic data and even variable data for the same mutation measured multiple times by different groups.  Carefully looking at the experimental conditions used for each of these entries would help us
-  explain the observed RMSEs.  Fold 5 on the other hand is the "other" category containing all proteins that did not meet the minimum threshold of "10" mutation entries.  It is certainly expected that 
+  to folds with the highest RMSEs : 2 and 5.  Fold 2 corresponds to thermonuclease, which has >600 mutations.  This protein was frequently used in thermal stability research in the '90s and bears both variable experimental approaches to extracting 
+  thermodynamic data and even variable data for the same mutation measured multiple times by different groups.  Carefully looking at the experimental conditions used for this entry would help us
+  explain the observed RMSE.  Fold 5 on the other hand is the "other" category containing all proteins that did not meet the minimum threshold of "10" mutation entries.  It is certainly expected that 
   predictions on a heterogeneous set of proteins would be large.  
 
   Nevertheless, this result is an improvement over previous approaches considering we achieve low RMSEs on a biologically realistic LOPO cross-validation method.  This is perhaps a testament to the power of 
