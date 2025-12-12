@@ -37,7 +37,8 @@
   - Using an MLP regressor (which was superior to XGBoost) on embedding features and ∆∆G values
   - Full modular codebase: preprocessing -> embedding -> feature building -> model training -> inference (model inference currently being investigated)
 
-### Repository Structure
+### 4. Repository Structure
+
 ```
 ├── requirements.txt
 ├── README.md
@@ -90,6 +91,72 @@
         ├── train_xgboost_lopo.py
         └── train_xgboost_lopo_multifeature.py
 ```
+The preprocessing sub-folder has scripts for the ingestion and filtering of of the publicly available FireProt DB csv file.  We first note that these preprocessing scripts were not 100% foolproof, and did require manual correction on a small subset 
+of the data.  We also note that for mutation extraction, we used CPU multiprocessing with a main and worker script (21 workers) to reduce inference time from a few hours to ~20 minutes.
+
+The embeddings sub-folder contains all logic for creating the raw ESM-2 embeddings along with associated features (i.e. delta embeddings).
+
+The individual files in the src folder (build_records,py, embeddings_loader.py, features.py, dataset_buider.py, mutation_record.py, and protein_grouping.py) contain the logic for three training-relevant tasks: 1) building a data class record for every FireProt         entry containing mutation, sequence, ddG, and embedding path information, 2) loading the tensors for the regression models, and 3) grouping the proteins for LOPO cross-validation.
+
+The training sub-folder contains logic for training different models in combination with different cross-validation and feature inputs. 
+
+Finally, the analysis subfolder contains logic for visualizing the RMSE results.
+
+### 5. Installation
+
+```
+    git clone https://github.com/pradeepbugga/Protein_Thermostability_ML.git
+    cd Protein_Thermostability_ML
+    pip install -r requirements.txt
+```
+  This project was tested on Python 3.12.3 and run on an A40 GPU (RunPod) with 48 GB VRAM and 48GB RAM.
+
+### 5. Data Preparation
+
+  This repo does not include the curated FireProt CSV containing protein sequence, mutation, and ∆∆G information.  I am happy to share this CSV file upon request. 
+
+### 6. Results Summary
+
+  - MLP Model (three layers with ReLU and dropout)  (note: XGBoost was far inferior) 
+  - Used delta per-residue embedding feature (i.e. the embedding vector for the mutant sequence at the specific mutant residue minus embedding vector for the wild type sequence at the specific residue)
+  - Used LOPO Cross-Validation with a minimum value of 10 (i.e. all proteins with >10 mutation entries are in individual folds, while proteins with <10 mutations are grouped together)
+
+  <p align="center">
+  <img width="2011" height="611" alt="image" src="https://github.com/user-attachments/assets/162cc111-12e3-4ffb-a669-f83da605a7d7" />
+  </p>
+
+  We see from the above plot that our MLP can predict ∆∆G from ESM-2 embeddings with RMSE <0.8, but significant RMSE variation among folds.  In some part, this is to be expected as there is not only
+  experimental variability in the buffer, pH, temperature, and method used to obtain ∆∆G, but also biological variability in the selection of proteins and associated mutations.  We pay special attention 
+  to folds with the highest RMSEs : fold 1, 2, and 5.  Fold 1 corresponds to guanyl-specific ribonuclease T1, a protein with >100 mutations, as the held-out protein.  Likewise, Fold 2 corresponds to 
+  thermonuclease, which has >600 mutations.  Both of these proteins were frequently used in thermal stability research in the '90s and they bear both variable experimental approaches to extracting 
+  thermodynamic data and even variable data for the same mutation measured multiple times by different groups.  Carefully looking at the experimental conditions used for each of these entries would help us
+  explain the observed RMSEs.  Fold 5 on the other hand is the "other" category containing all proteins that did not meet the minimum threshold of "10" mutation entries.  It is certainly expected that 
+  predictions on a heterogeneous set of proteins would be large.  
+
+  Nevertheless, this result is an improvement over previous approaches considering we achieve low RMSEs on a biologically realistic LOPO cross-validation method.  This is perhaps a testament to the power of 
+  large protein language models (ESM-2) and the use of actual experimental data rather than poorer proxies.
+
+### 7. Ongoing Efforts
+
+  Additional areas of improvement include more careful curation of experimental data (removing entries where pH is << or >> physiological pH), hyperparameter tuning (what layer of ESM-2 is most suitable for 
+  thermodynamic predictions?), feature engineering (do local environment embeddings help?), and finally inference on the above thermostable mutations from TdT to see if our model can truly offer a benefit to protein engineers.
+
+### 8. Limitations
+
+  Our input dataset contains experimental measurements going back forty years and spanning old and new techniques for calculating ∆∆G.  In addition, these assays themselves have a standard deviation that can affect our model features.
+  That being said, the entire field of AI for biology suffers from a lack of sufficient experimental data, so this is likely the best we can do.
+  Finally, our method specifically filtered for single mutants to create the simplest conditions for developing a well-performing model.  In practice, multiple mutations are combined in the same protein to achieve additive improvements 
+  in  thermal stability.  Expanding our approach to multi- mutants will be an important next step.
+
+### 9. License
+
+  This project is released under the MIT License.
+  
+
+
+
+
+
 
   
   
