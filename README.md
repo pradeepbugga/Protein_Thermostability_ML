@@ -61,6 +61,8 @@
     │   ├── esm_model_loader.py
     │   └── save_embeddings.py
     ├── features.py
+    ├── inference
+    │   ├── sample_inference.py
     ├── load_dataset.py
     ├── models
     │   ├── __init__.py
@@ -133,13 +135,28 @@ Finally, the analysis subfolder contains logic for visualizing the RMSE results.
   explain the observed RMSE.  Fold 5 on the other hand is the "other" category containing all proteins that did not meet the minimum threshold of "10" mutation entries.  It is certainly expected that 
   predictions on a heterogeneous set of proteins would be large.  
 
+  Different ESM-2 layers correspond to extraction of different features of the protein, with the earliest layers representing more of the raw amino acid sequence while the later layers representing more of the 
+  three-dimensional architecture.  Trying layer 25 instead of layer 33 shows marginal change, suggesting layers 25-33 do not contribute significantly to prediction.
+  
+  <p align="center">
+  <img width="2011" height="611" alt="image" src="https://github.com/user-attachments/assets/09dd7134-d610-4982-84d5-d34c3ec10d83" />
+  </p>  
+
   Nevertheless, this result is an improvement over previous approaches considering we achieve low RMSEs on a biologically realistic LOPO cross-validation method.  This is perhaps a testament to the power of 
   large protein language models (ESM-2) and the use of actual experimental data rather than poorer proxies.
 
 ### 7. Ongoing Efforts
 
-  Additional areas of improvement include more careful curation of experimental data (removing entries where pH is << or >> physiological pH), hyperparameter tuning (what layer of ESM-2 is most suitable for 
-  thermodynamic predictions?), feature engineering (do local environment embeddings help?), and finally inference on the above thermostable mutations from TdT to see if our model can truly offer a benefit to protein engineers.
+  Additional areas of improvement include more careful curation of experimental data (removing entries where pH is << or >> physiological pH), hyperparameter tuning, feature engineering (do local environment embeddings help?), and finally inference on the above thermostable mutations from TdT to see if our model can truly offer a benefit to protein engineers.
+
+On that last point, below is our initial inference on these previously identified mutations(left).
+  <p align="center">
+  <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/11c7f5ef-22e9-4721-a5da-4833301bd092" />
+
+<img width="500" height="300" alt="masked_likelihood" src="https://github.com/user-attachments/assets/99225c15-f61b-485a-87f2-5c58fd56ed9d" />
+</p>
+  Comparing this result to the previous "ESM-2 only" delta log-likelihood values (right), we notice that mutation M238K, which ESM-2 found to be significantly destabilizing, now shows up with a positive ∆∆G value ("stabilizing") from inference.  This observation is perhaps the best validation of our approach, because it highlights raw ESM-2's limitation in identifying non-natural mutations that can engineer higher thermostability and our combined ESM-2 embedding / ∆∆G MLP regression model's ability to overcome that limitation.   
+  
 
 ### 8. Limitations
 
