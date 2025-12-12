@@ -1,5 +1,6 @@
 # Protein Thermostability Prediction with Machine Learning
-## Regressing ESM-2 Embeddings with Experimental ∆∆G Values from a Publicly Available Database
+
+## Regressing ESM-2 Embeddings with Experimental ∆∆G Values from a Public Database
 
 <p align="center">
 <img width="600" height="336" alt="image" src="https://github.com/user-attachments/assets/3e84c6bd-a093-43b4-9f70-0519e07ecd9f" />
