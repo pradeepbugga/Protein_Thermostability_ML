@@ -37,10 +37,10 @@ if __name__ == "__main__":
         safe_name = name.replace('/', '_')
 
         print(f"Embedding wt sequence {safe_name} at {index}...")
-        per_res_wt, pooled_wt = embed_sequence(esm_wt_sequence, model, layer = layer, alphabet=alphabet, device='cuda')
+        per_res_wt, pooled_wt = embed_sequence(esm_wt_sequence, model, alphabet=alphabet, layer = layer,  device='cuda')
 
         print(f"Embedding mut sequence {safe_name} at {index}...")
-        per_res_mut, pooled__mut = embed_sequence(esm_mut_sequence, model, layer = layer,alphabet, device='cuda')
+        per_res_mut, pooled__mut = embed_sequence(esm_mut_sequence, model, alphabet, layer = layer, device='cuda')
 
         # Save embeddings
         

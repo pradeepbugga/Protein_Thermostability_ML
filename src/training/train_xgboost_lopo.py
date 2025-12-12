@@ -13,7 +13,6 @@ from protein_grouping import group_by_protein
 
 from xgboost import XGBRegressor
 
-
 input_csv = Path("./data/fireprot_ddG_sequences_clean.csv")
 embed_folder = Path("./data/embeddings")
 layer = 33
@@ -24,7 +23,7 @@ if __name__ == "__main__":
     records = build_records(
         raw_embed_folder = embed_folder,
         csv_path = input_csv,
-        layer = layer   
+        layer = layer     
     )
 
     print(f"Built {len(records)} records.")
@@ -42,7 +41,7 @@ if __name__ == "__main__":
     #convert X,y to numpy for xgboost
     X = X.cpu().numpy()
     y = y.cpu().numpy()
-
+    
     #build groups
     protein_ids = [rec.protein_id for rec in records]
     groups, protein_counts = group_by_protein(protein_ids, min_mutations=10)
@@ -78,7 +77,7 @@ if __name__ == "__main__":
         rmse = np.sqrt(mse)
 
         #save model
-        output_path = Path("./results/models/xgboost_lopo") / f"fold_{fold+1}" / "model.json"
+        output_path = Path("./results/models/xgboost_lopo") / f"layer_{layer}"/ f"fold_{fold+1}" / "model.json"
         output_path.parent.mkdir(parents=True, exist_ok=True)
         model.save_model(output_path)
         print(f"Model saved to {output_path}") 
@@ -90,6 +89,6 @@ if __name__ == "__main__":
         }
 
         #save fold results
-        results_path = Path("./results/models/xgboost_lopo") / f"fold_{fold+1}"/"results.json"
+        results_path = Path("./results/models/xgboost_lopo") / f"layer_{layer}" / f"fold_{fold+1}"/"results.json"
         pd.Series(fold_output).to_json(results_path)
         print(f"Fold results saved to {results_path}")
