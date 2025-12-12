@@ -15,7 +15,7 @@
   expediting this otherwise time-consuming and laborious wet-lab process and predict thermal stability much like AlphaFold assists in structure prediction.
 
 ### 2. Project Overview
-  This project takes advantage of recently developed protein language models (PLMs), namely ESM-2, and integrates it with FireProt DB, a publicly available dataset of thermodynamic data.  More specifically, we build a machine learning model
+  This project takes advantage of recently developed protein language models (PLMs), namely ESM-2, and integrates it with FireProt DB (https://loschmidt.chemi.muni.cz/fireprotdb/), a publicly available dataset of thermodynamic data.  More specifically, we build a machine learning model
   to predict thermal stability changes (∆∆G) from single-point mutations.  The pipeline entails curated measurements from the FireProt database, ESM-2 protein embeddings, and leave-out-one-protein (LOPO) cross-validation.  
   
   ESM protein language models inherently learn what amino acid sequences are evolutionarily preferred and are therefore well-suited for identifying destabilizing mutations.  However, these models struggle with identifying engineered,
