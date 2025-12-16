@@ -12,11 +12,12 @@
   Enzymes that have increased thermal stability are of significant importance to bio-industrial processes where biochemical reactions performed at higher temperatures can increase reactor productivity 
   (the amount of commercial product produced per unit time) and overcome limited solubility of starting materials.  Traditional approaches to improving this property involves protein engineering, where hundreds (if not thousands)
   of proteins must be individually expressed from custom DNA sequences, then screened in assays measuring the temperature (Tm) where the protein unfolds.  Machine learning, especially deep learning, holds the potential for
-  expediting this otherwise time-consuming and laborious wet-lab process and predict thermal stability much like AlphaFold assists in structure prediction.
+  expediting this otherwise time-consuming and laborious wet-lab process and predict thermal stability much like AlphaFold assists in structure prediction.  However, a critical limitation of current computational approaches to predicting thermostable mutants(i.e. ThermoMPNN, a structure-based approach, and Flex DDG, a physics-based approach) is the requirement of a 3-D structure (practically, a PDB entry).  Sequence-based approaches like ESM-2 can take advantage of the massive corpus of available sequence data (in such repositories as UniRef) and can accelerate protein engineering research and commercialization that would otherwise require structural information. 
+  
 
 ### 2. Project Overview
   This project takes advantage of recently developed protein language models (PLMs), namely ESM-2, and integrates it with FireProt DB (https://loschmidt.chemi.muni.cz/fireprotdb/), a publicly available dataset of thermodynamic data.  More specifically, we build a machine learning model
-  to predict thermal stability changes (∆∆G) from single-point mutations.  The pipeline entails curated measurements from the FireProt database, ESM-2 protein embeddings, and leave-out-one-protein (LOPO) cross-validation.  
+  to predict thermal stability changes (∆∆G) from single-point mutations.  The pipeline entails curated measurements from the FireProt database, ESM-2 protein embeddings, and leave-out-one-protein (LOPO) cross-validation.
   
   ESM protein language models inherently learn what amino acid sequences are evolutionarily preferred and are therefore well-suited for identifying destabilizing mutations.  However, these models struggle with identifying engineered,
   stabilizing mutations that endow proteins with properties (i.e. thermal stability at 50 °C) not usually found in nature.  As a quick note, we show below that known engineered mutations that confer thermostability to a sample protein 
@@ -161,11 +162,26 @@ On that last point, below is our initial inference on these previously identifie
 ### 8. Limitations
 
   Our input dataset contains experimental measurements going back forty years and spanning old and new techniques for calculating ∆∆G.  In addition, these assays themselves have a standard deviation that can affect our model features.
-  That being said, the entire field of AI for biology suffers from a lack of sufficient experimental data, so this is likely the best we can do.
+  That being said, the entire field of AI for biology suffers from a lack of sufficient experimental data, so this is likely the best we can do with regard to input data.
+
+  We choose ∆∆G as our target for our model, but it is important to note that the more commonly used metric for protein engineers (not biophysicists) is the melting temperature (Tm).  As the melting temperature signifies the temperature at which 50% of the protein is unfolded, Tm is more immediately applicable for identifying how stable a protein can be at a chosen reaction temperature.  
+  
   Finally, our method specifically filtered for single mutants to create the simplest conditions for developing a well-performing model.  In practice, multiple mutations are combined in the same protein to achieve additive improvements 
   in  thermal stability.  Expanding our approach to multi- mutants will be an important next step.
 
-### 9. License
+### 9. Comparison to Other Approaches
+
+  We acknowledge a previous and related effort to predict ∆∆G from ESM-2 embeddings called Mutate Everything (https://arxiv.org/pdf/2310.12979).  One significant difference in their appraoch is the use of a different dataset - the "MegaScale" dataset - that consists of proteolysis measurements as a proxy for thermal stability but consists of all possible mutations of sub-80 residue proteins (natural and engineered) amounting to >500K entries.  We perform inference with this method on our TdT mutants, and after side-by-side comparison with our method below (left = our method, right = Mutate Everything), we see that while K271E is more accurately predicted as stabilizing, F280L and M283K are seen as destablizing (unlike our approach).        
+
+ <p align="center">
+<img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/11c7f5ef-22e9-4721-a5da-4833301bd092" />
+
+  <img width="500" height="300" alt="image" src="https://github.com/user-attachments/assets/06993d50-ff4c-418e-aef5-f7b3deb6dc1d" />
+</p>
+
+  These results highlight the many trade-offs that need to be made in developing machine learning models for biology.  Our approach uses heterogeneous experimental data with different pHs, temperatures, buffers, and denaturation methods and only a few thousand entries.  However, the dataset includes a variety of small, medium, and large proteins spanning a number of structural elements and domains.  The Mutate Everything approach uses the "MegaScale" dataset that has >500K different mutations at every amino acid position and with standardized experimental conditions.  However, this dataset uses an indirect measurement of ∆∆G (proteolysis), a surface-bound protein (rather than fully conformationally free), and proteins that are <80 residues due to the limitations of oligo pool synthesis (<250 nt).  We note that for our approach, we specifically removed the "MegaScale" dataset to ensure that all entries had strict ∆∆G measurements.  Based on the above comparison, our approach looks to be more accurate in predicting stabilization (or de-stabilization) of TdT mutants. 
+
+### 10. License
 
   This project is released under the MIT License.
   
